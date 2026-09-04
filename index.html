@@ -155,7 +155,7 @@
       z-index: -1;
       pointer-events: none;
     }
-    .layer { position: relative; overflow: visible; border-radius: 20px; background: color-mix(in oklab, var(--surface) 88%, var(--accent) 8%); padding: 32px 24px; box-shadow: var(--shadow); margin-bottom: 28px; }
+    .layer { position: sticky; overflow: visible; border-radius: 20px; background: color-mix(in oklab, var(--surface) 88%, var(--accent) 8%); padding: 32px 24px; box-shadow: var(--shadow); margin-bottom: 16px; }
     .layer-grid { display: grid; gap: 24px; }
     .num { font-family: var(--display); font-size: 3rem; letter-spacing: -.04em; color: var(--accent); margin: 0; }
     .layer h3 { font-size: 1.85rem; letter-spacing: -.02em; margin-top: 8px; }
@@ -353,7 +353,7 @@
         <h2 class="display">Five layers. One way of working.</h2>
       </div>
 
-      <article class="layer">
+      <article class="layer" style="top: 5.5rem; z-index: 1;">
         <div class="layer-grid">
           <p class="num">01</p>
           <div>
@@ -370,7 +370,7 @@
           </div>
         </div>
       </article>
-      <article class="layer">
+      <article class="layer" style="top: 6.65rem; z-index: 2;">
         <div class="layer-grid">
           <p class="num">02</p>
           <div>
@@ -383,7 +383,7 @@
           </div>
         </div>
       </article>
-      <article class="layer">
+      <article class="layer" style="top: 7.8rem; z-index: 3;">
         <div class="layer-grid">
           <p class="num">03</p>
           <div>
@@ -396,7 +396,7 @@
           </div>
         </div>
       </article>
-      <article class="layer">
+      <article class="layer" style="top: 8.95rem; z-index: 4;">
         <div class="layer-grid">
           <p class="num">04</p>
           <div>
@@ -409,7 +409,7 @@
           </div>
         </div>
       </article>
-      <article class="layer">
+      <article class="layer" style="top: 10.1rem; z-index: 5;">
         <div class="layer-grid">
           <p class="num">05</p>
           <div>
@@ -426,6 +426,7 @@
           </div>
         </div>
       </article>
+      <div style="height: 48vh;"></div>
     </section>
 
     <section class="work" id="work">
