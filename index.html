@@ -37,10 +37,18 @@
 
     .progress { position: fixed; top: 0; left: 0; height: 2px; width: 100%; transform-origin: 0 50%; transform: scaleX(var(--progress, 0)); background: var(--accent); z-index: 70; pointer-events: none; }
     .grain { pointer-events: none; position: fixed; inset: 0; z-index: 80; opacity: .05; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E"); }
+    body {
+      background:
+        radial-gradient(90vw 50vw at 78% -8%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 58%),
+        radial-gradient(70vw 46vw at -10% 38%, color-mix(in oklab, var(--accent) 10%, transparent), transparent 55%),
+        radial-gradient(60vw 40vw at 70% 78%, color-mix(in oklab, var(--accent) 8%, transparent), transparent 60%),
+        var(--bg);
+    }
     .orbs { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
-    .orb { position: absolute; border-radius: 50%; filter: blur(48px); opacity: .22; animation: drift 18s var(--ease) infinite alternate; }
-    .orb.a { width: 42vw; height: 42vw; background: color-mix(in oklab, var(--accent) 35%, transparent); top: -8%; right: -10%; animation-duration: 22s; }
-    .orb.b { width: 28vw; height: 28vw; background: color-mix(in oklab, var(--accent) 18%, transparent); bottom: 10%; left: -8%; animation-duration: 26s; animation-delay: -6s; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(56px); opacity: .34; animation: drift 18s var(--ease) infinite alternate; }
+    .orb.a { width: 46vw; height: 46vw; background: color-mix(in oklab, var(--accent) 42%, transparent); top: -10%; right: -12%; animation-duration: 22s; }
+    .orb.b { width: 34vw; height: 34vw; background: color-mix(in oklab, var(--accent) 26%, transparent); bottom: 8%; left: -10%; animation-duration: 26s; animation-delay: -6s; }
+    .orb.c { width: 28vw; height: 28vw; background: color-mix(in oklab, var(--accent) 22%, transparent); top: 48%; right: 8%; animation-duration: 20s; animation-delay: -9s; }
     @keyframes drift {
       from { transform: translate3d(0,0,0) scale(1); }
       to { transform: translate3d(4%, 6%, 0) scale(1.08); }
@@ -107,14 +115,47 @@
     .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
     .chip { border-radius: 999px; padding: 8px 16px; font-size: .9rem; background: color-mix(in oklab, var(--bg) 40%, transparent); box-shadow: var(--shadow); }
 
-    .manifesto { padding: 80px 0; max-width: 52rem; margin: 0 auto; }
+    .manifesto {
+      position: relative;
+      min-height: 92dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 0 96px;
+      max-width: 52rem;
+      margin: 0 auto;
+    }
+    .manifesto::before {
+      content: "";
+      position: absolute;
+      inset: 8% -30%;
+      background: radial-gradient(ellipse at 30% 50%, color-mix(in oklab, var(--accent) 18%, transparent), transparent 68%);
+      pointer-events: none;
+      z-index: -1;
+    }
     .quote { font-family: var(--display); font-size: clamp(1.6rem, 3.4vw, 2.7rem); line-height: 1.25; letter-spacing: -.02em; margin: 0; }
 
     #layers, #work, #reel, #journey, #impact, #connect, #top { scroll-margin-top: 6.25rem; }
-    .section-head { margin-bottom: 40px; }
+    .section-head { margin-bottom: 48px; padding-top: 8px; }
     .display { font-size: clamp(2.1rem, 5vw, 4.2rem); line-height: 1.05; letter-spacing: -.03em; max-width: 36rem; }
 
-    .layer { position: sticky; overflow: visible; border-radius: 20px; background: var(--surface); padding: 32px 24px; box-shadow: var(--shadow); margin-bottom: 16px; }
+    #layers { position: relative; padding: 72px 0 48px; }
+    #layers::before {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0; left: 50%;
+      width: 100vw;
+      margin-left: -50vw;
+      background:
+        linear-gradient(180deg,
+          transparent,
+          color-mix(in oklab, var(--accent) 7%, var(--surface)) 12%,
+          color-mix(in oklab, var(--surface) 92%, var(--accent) 8%) 50%,
+          transparent);
+      z-index: -1;
+      pointer-events: none;
+    }
+    .layer { position: relative; overflow: visible; border-radius: 20px; background: color-mix(in oklab, var(--surface) 88%, var(--accent) 8%); padding: 32px 24px; box-shadow: var(--shadow); margin-bottom: 28px; }
     .layer-grid { display: grid; gap: 24px; }
     .num { font-family: var(--display); font-size: 3rem; letter-spacing: -.04em; color: var(--accent); margin: 0; }
     .layer h3 { font-size: 1.85rem; letter-spacing: -.02em; margin-top: 8px; }
@@ -253,7 +294,7 @@
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
-  <div class="orbs" aria-hidden="true"><div class="orb a"></div><div class="orb b"></div></div>
+  <div class="orbs" aria-hidden="true"><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div></div>
   <div class="cursor" id="cursor" aria-hidden="true"></div>
   <div class="progress" id="progress" aria-hidden="true"></div>
 
@@ -312,7 +353,7 @@
         <h2 class="display">Five layers. One way of working.</h2>
       </div>
 
-      <article class="layer" style="top: 5.5rem; z-index: 1;">
+      <article class="layer">
         <div class="layer-grid">
           <p class="num">01</p>
           <div>
@@ -329,7 +370,7 @@
           </div>
         </div>
       </article>
-      <article class="layer" style="top: 6.65rem; z-index: 2;">
+      <article class="layer">
         <div class="layer-grid">
           <p class="num">02</p>
           <div>
@@ -342,7 +383,7 @@
           </div>
         </div>
       </article>
-      <article class="layer" style="top: 7.8rem; z-index: 3;">
+      <article class="layer">
         <div class="layer-grid">
           <p class="num">03</p>
           <div>
@@ -355,7 +396,7 @@
           </div>
         </div>
       </article>
-      <article class="layer" style="top: 8.95rem; z-index: 4;">
+      <article class="layer">
         <div class="layer-grid">
           <p class="num">04</p>
           <div>
@@ -368,7 +409,7 @@
           </div>
         </div>
       </article>
-      <article class="layer" style="top: 10.1rem; z-index: 5;">
+      <article class="layer">
         <div class="layer-grid">
           <p class="num">05</p>
           <div>
@@ -385,7 +426,6 @@
           </div>
         </div>
       </article>
-      <div style="height: 96px;"></div>
     </section>
 
     <section class="work" id="work">
