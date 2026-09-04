@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Studio — Sanam Hera</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0a09; --surface: #141210; --raised: #1c1916;
+      --fg: #f3efe8; --muted: #9a9288; --accent: #d4a574;
+      --shadow: 0 0 0 1px rgba(243,239,232,.08);
+      --display: "Fraunces", Palatino, serif;
+      --sans: "Figtree", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: var(--sans); background: var(--bg); color: var(--fg); min-height: 100dvh; }
+    a { color: var(--accent); text-decoration: none; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 40px 20px 80px; }
+    h1 { font-family: var(--display); font-weight: 500; font-size: 2.2rem; margin: 0 0 8px; }
+    .lede { color: var(--muted); max-width: 38rem; line-height: 1.55; }
+    label { display: grid; gap: 6px; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 18px; }
+    input[type="password"], input[type="text"] {
+      width: 100%; font: inherit; color: var(--fg); background: var(--raised);
+      border: 0; box-shadow: var(--shadow); border-radius: 12px; padding: 12px 14px; min-height: 48px;
+    }
+    .btn {
+      margin-top: 14px; border: 0; border-radius: 999px; background: var(--fg); color: var(--bg);
+      padding: 12px 22px; font: inherit; font-weight: 600; cursor: pointer;
+    }
+    .btn:hover { background: var(--accent); }
+    .btn[disabled] { opacity: .55; }
+    .grid { display: grid; gap: 16px; margin-top: 36px; }
+    @media (min-width: 720px) { .grid { grid-template-columns: 1fr 1fr; } }
+    .slot { background: var(--surface); border-radius: 18px; padding: 18px; box-shadow: var(--shadow); }
+    .slot h2 { font-family: var(--display); font-size: 1.15rem; font-weight: 500; margin: 0 0 6px; }
+    .slot p { margin: 0 0 12px; color: var(--muted); font-size: .88rem; }
+    .preview { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 12px; background: var(--raised); display: block; margin-bottom: 12px; }
+    .preview.tall { aspect-ratio: 9/16; max-height: 220px; width: auto; margin-inline: auto; }
+    .status { min-height: 1.2em; margin: 8px 0 0; font-size: .85rem; color: var(--accent); }
+    .hidden { display: none; }
+    .note { font-size: .85rem; color: var(--muted); line-height: 1.5; }
+    code { color: var(--fg); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="letter-spacing:.18em; text-transform:uppercase; color:var(--accent); font-size:.72rem; font-weight:500;">Private</p>
+    <h1>Studio</h1>
+    <p class="lede">Replace photos and films on www.sanamhera.com. Files go to your GitHub repo; the live site updates after Pages rebuilds (usually under two minutes).</p>
+
+    <div id="gate">
+      <label>GitHub personal access token (repo scope)
+        <input id="token" type="password" autocomplete="off" placeholder="ghp_…" />
+      </label>
+      <p class="note">Create one at GitHub → Settings → Developer settings → Personal access tokens. Grant <code>repo</code>. It stays in this browser only.</p>
+      <button class="btn" id="unlock" type="button">Unlock</button>
+      <p class="status" id="gateNote"></p>
+    </div>
+
+    <div id="board" class="hidden">
+      <p class="note">Signed in to <code>sanamhera/sanamhera.github.io</code>. Drop a file on a slot, or use Choose.</p>
+      <div class="grid" id="slots"></div>
+      <p style="margin-top:28px;"><a href="/">← Back to site</a> · <button class="btn" id="forget" type="button" style="margin-top:0">Forget token</button></p>
+    </div>
+  </div>
+  <script>
+    const OWNER = "sanamhera";
+    const REPO = "sanamhera.github.io";
+    const API = `https://api.github.com/repos/${OWNER}/${REPO}/contents`;
+    const SLOTS = [
+      { path: "images/portrait.png", title: "Hero portrait", hint: "Full-bleed photo at the top. PNG or JPG.", kind: "image", preview: "images/portrait.png" },
+      { path: "images/desk.jpeg", title: "Desk photo", hint: "Impact section, large still.", kind: "image", preview: "images/desk.jpeg" },
+      { path: "images/award.jpeg", title: "Award photo", hint: "Phoenix Meet still.", kind: "image", preview: "images/award.jpeg" },
+      { path: "videos/video-1.mp4", title: "Film 01 · Google Flow", hint: "MP4, keep under ~25 MB.", kind: "video", preview: "videos/video-1.mp4" },
+      { path: "videos/video-2.mp4", title: "Film 02 · Grok", hint: "MP4, keep under ~25 MB.", kind: "video", preview: "videos/video-2.mp4" },
+      { path: "videos/video-3.mp4", title: "Film 03 · ElevenLabs", hint: "MP4, keep under ~25 MB.", kind: "video", preview: "videos/video-3.mp4" },
+      { path: "videos/video-4.mp4", title: "Film 04 · Canva", hint: "MP4, keep under ~25 MB.", kind: "video", preview: "videos/video-4.mp4" }
+    ];
+
+    const tokenInput = document.getElementById("token");
+    const gateNote = document.getElementById("gateNote");
+    tokenInput.value = localStorage.getItem("sh_studio_token") || "";
+
+    async function api(path, opts = {}) {
+      const token = localStorage.getItem("sh_studio_token");
+      const res = await fetch(path, {
+        ...opts,
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${token}`,
+          "X-GitHub-Api-Version": "2022-11-28",
+          ...(opts.headers || {})
+        }
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.message || res.statusText);
+      return json;
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const s = String(reader.result);
+          resolve(s.slice(s.indexOf(",") + 1));
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function upload(slot, file, statusEl) {
+      statusEl.textContent = "Reading file…";
+      const content = await fileToBase64(file);
+      statusEl.textContent = "Talking to GitHub…";
+      let sha;
+      try {
+        const current = await api(`${API}/${slot.path}`);
+        sha = current.sha;
+      } catch (_) { /* new file */ }
+      await api(`${API}/${slot.path}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: `Studio: update ${slot.title}`,
+          content,
+          sha
+        })
+      });
+      statusEl.textContent = "Uploaded. Live in about a minute — hard-refresh the site.";
+    }
+
+    function renderBoard() {
+      document.getElementById("gate").classList.add("hidden");
+      document.getElementById("board").classList.remove("hidden");
+      const root = document.getElementById("slots");
+      root.innerHTML = "";
+      SLOTS.forEach((slot) => {
+        const el = document.createElement("article");
+        el.className = "slot";
+        const media = slot.kind === "video"
+          ? `<video class="preview tall" src="${slot.preview}?v=${Date.now()}" muted playsinline></video>`
+          : `<img class="preview" src="${slot.preview}?v=${Date.now()}" alt="" />`;
+        el.innerHTML = `
+          <h2>${slot.title}</h2>
+          <p>${slot.hint}</p>
+          ${media}
+          <input type="file" accept="${slot.kind === "video" ? "video/mp4,video/*" : "image/*"}" />
+          <p class="status"></p>
+        `;
+        const input = el.querySelector("input");
+        const status = el.querySelector(".status");
+        input.addEventListener("change", async () => {
+          const file = input.files && input.files[0];
+          if (!file) return;
+          input.disabled = true;
+          try {
+            await upload(slot, file, status);
+            const preview = el.querySelector(".preview");
+            preview.src = URL.createObjectURL(file);
+          } catch (err) {
+            status.textContent = err.message || "Upload failed";
+          } finally {
+            input.disabled = false;
+          }
+        });
+        root.appendChild(el);
+      });
+    }
+
+    document.getElementById("unlock").addEventListener("click", async () => {
+      const token = tokenInput.value.trim();
+      if (!token) { gateNote.textContent = "Paste a token first."; return; }
+      localStorage.setItem("sh_studio_token", token);
+      gateNote.textContent = "Checking…";
+      try {
+        await api(`https://api.github.com/repos/${OWNER}/${REPO}`);
+        renderBoard();
+      } catch (err) {
+        localStorage.removeItem("sh_studio_token");
+        gateNote.textContent = err.message || "Could not reach the repo. Check the token has repo access.";
+      }
+    });
+
+    document.getElementById("forget").addEventListener("click", () => {
+      localStorage.removeItem("sh_studio_token");
+      location.reload();
+    });
+
+    if (tokenInput.value) {
+      document.getElementById("unlock").click();
+    }
+  </script>
+</body>
+</html>
