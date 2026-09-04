@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sanam Hera</title>
+  <meta name="description" content="Sanam Hera — AI Innovation Lead. Systems at the intersection of business strategy, enterprise operations, product, and change." />
+  <meta name="theme-color" content="#0b0a09" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;1,400&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0a09;
+      --surface: #141210;
+      --raised: #1c1916;
+      --fg: #f3efe8;
+      --muted: #9a9288;
+      --faint: #6d675f;
+      --line: #2a2622;
+      --accent: #d4a574;
+      --shadow: 0 0 0 1px rgba(243, 239, 232, 0.08);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --display: "Fraunces", "Iowan Old Style", Palatino, serif;
+      --sans: "Figtree", "Segoe UI", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--bg); color: var(--fg); -webkit-font-smoothing: antialiased; }
+    body { margin: 0; font-family: var(--sans); background: var(--bg); overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; cursor: pointer; }
+    h1, h2, h3 { font-family: var(--display); font-weight: 500; text-wrap: balance; margin: 0; }
+    p { text-wrap: pretty; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+    @media (min-width: 768px) { .wrap { padding: 0 32px; } }
+
+    .progress { position: fixed; top: 0; left: 0; height: 2px; width: 100%; transform-origin: 0 50%; transform: scaleX(var(--progress, 0)); background: var(--accent); z-index: 70; pointer-events: none; }
+    .grain { pointer-events: none; position: fixed; inset: 0; z-index: 80; opacity: .05; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E"); }
+    .orbs { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(48px); opacity: .22; animation: drift 18s var(--ease) infinite alternate; }
+    .orb.a { width: 42vw; height: 42vw; background: color-mix(in oklab, var(--accent) 35%, transparent); top: -8%; right: -10%; animation-duration: 22s; }
+    .orb.b { width: 28vw; height: 28vw; background: color-mix(in oklab, var(--accent) 18%, transparent); bottom: 10%; left: -8%; animation-duration: 26s; animation-delay: -6s; }
+    @keyframes drift {
+      from { transform: translate3d(0,0,0) scale(1); }
+      to { transform: translate3d(4%, 6%, 0) scale(1.08); }
+    }
+    .cursor { display: none; }
+    @media (pointer: fine) {
+      html.cursor-on, html.cursor-on * { cursor: none !important; }
+      .cursor { display: block; position: fixed; top: 0; left: 0; z-index: 90; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 99px; border: 1px solid color-mix(in oklab, var(--accent) 80%, white); background: color-mix(in oklab, var(--accent) 30%, transparent); pointer-events: none; mix-blend-mode: screen; transform: translate3d(var(--cx, -40px), var(--cy, -40px), 0); transition: width 180ms var(--ease), height 180ms var(--ease), margin 180ms var(--ease); }
+      .cursor.hot { width: 44px; height: 44px; margin: -22px 0 0 -22px; background: color-mix(in oklab, var(--accent) 12%, transparent); }
+    }
+    .shine { pointer-events: none; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 35%, color-mix(in oklab, var(--fg) 14%, transparent) 50%, transparent 65%); transform: translateX(-100%); animation: shine 7.5s var(--ease) infinite; mix-blend-mode: screen; }
+    @keyframes shine { 0%, 55% { transform: translateX(-120%); } 75%, 100% { transform: translateX(120%); } }
+
+    .reveal { opacity: 0; transform: translateY(24px); filter: blur(6px); transition: opacity 700ms var(--ease), transform 700ms var(--ease), filter 700ms var(--ease); }
+    .reveal.in { opacity: 1; transform: none; filter: none; }
+    .stagger > * { opacity: 0; transform: translateY(16px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
+    .stagger.in > *:nth-child(1) { transition-delay: 40ms; }
+    .stagger.in > *:nth-child(2) { transition-delay: 90ms; }
+    .stagger.in > *:nth-child(3) { transition-delay: 140ms; }
+    .stagger.in > *:nth-child(4) { transition-delay: 190ms; }
+    .stagger.in > *:nth-child(5) { transition-delay: 240ms; }
+    .stagger.in > * { opacity: 1; transform: none; }
+
+    header { position: fixed; inset: 0 0 auto; z-index: 50; }
+    .nav-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0 8px; }
+    .brand { font-family: var(--display); font-size: 1.15rem; }
+    .nav-links { display: none; gap: 28px; }
+    .nav-links a { font-size: .9rem; font-weight: 500; color: color-mix(in oklab, var(--fg) 80%, transparent); }
+    .nav-links a:hover { color: var(--fg); }
+    .nav-mobile { display: flex; gap: 20px; padding-bottom: 12px; font-size: .9rem; font-weight: 500; color: color-mix(in oklab, var(--fg) 80%, transparent); }
+    .cta { border-radius: 999px; background: var(--fg); color: var(--bg); padding: 8px 16px; font-size: .9rem; font-weight: 500; transition: transform 150ms var(--ease), background-color 150ms var(--ease); }
+    .cta:hover { background: var(--accent); }
+    .cta:active { transform: scale(.96); }
+    @media (min-width: 768px) {
+      .nav-links { display: flex; }
+      .nav-mobile { display: none; }
+    }
+
+    .kicker { margin: 0 0 12px; font-size: .72rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
+
+    .hero { position: relative; min-height: 100dvh; overflow: hidden; }
+    .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 14%; animation: heroDrift 22s var(--ease) infinite alternate; }
+    @keyframes heroDrift {
+      from { transform: scale(1.06) translateY(0); }
+      to { transform: scale(1.16) translateY(5%); }
+    }
+    .hero-scrim {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(180deg, color-mix(in oklab, var(--bg) 35%, transparent) 0%, color-mix(in oklab, var(--bg) 25%, transparent) 40%, var(--bg) 100%);
+    }
+    @media (min-width: 768px) {
+      .hero-scrim {
+        background:
+          linear-gradient(90deg, var(--bg) 0%, color-mix(in oklab, var(--bg) 82%, transparent) 42%, color-mix(in oklab, var(--bg) 20%, transparent) 72%, transparent 100%),
+          linear-gradient(180deg, color-mix(in oklab, var(--bg) 45%, transparent) 0%, transparent 28%, color-mix(in oklab, var(--bg) 55%, transparent) 68%, var(--bg) 100%);
+      }
+    }
+    .hero-copy { position: relative; z-index: 1; min-height: 100dvh; display: flex; flex-direction: column; justify-content: flex-end; padding: 112px 0 72px; }
+    .hero h1 { font-size: clamp(3.1rem, 8vw, 7.4rem); line-height: .92; letter-spacing: -.035em; }
+    .hero h1 em { font-style: italic; color: var(--accent); display: block; }
+    .lede { max-width: 36rem; margin: 24px 0 0; font-size: 1.15rem; line-height: 1.55; color: color-mix(in oklab, var(--fg) 82%, transparent); }
+    .disciplines { max-width: 36rem; margin: 16px 0 0; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in oklab, var(--fg) 55%, transparent); }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+    .chip { border-radius: 999px; padding: 8px 16px; font-size: .9rem; background: color-mix(in oklab, var(--bg) 40%, transparent); box-shadow: var(--shadow); }
+
+    .manifesto { padding: 80px 0; max-width: 52rem; margin: 0 auto; }
+    .quote { font-family: var(--display); font-size: clamp(1.6rem, 3.4vw, 2.7rem); line-height: 1.25; letter-spacing: -.02em; margin: 0; }
+
+    #layers, #work, #films, #journey, #impact, #connect, #top { scroll-margin-top: 6.25rem; }
+    .section-head { margin-bottom: 40px; }
+    .display { font-size: clamp(2.1rem, 5vw, 4.2rem); line-height: 1.05; letter-spacing: -.03em; max-width: 36rem; }
+
+    .layer { position: sticky; overflow: visible; border-radius: 20px; background: var(--surface); padding: 32px 24px; box-shadow: var(--shadow); margin-bottom: 16px; }
+    .layer-grid { display: grid; gap: 24px; }
+    .num { font-family: var(--display); font-size: 3rem; letter-spacing: -.04em; color: var(--accent); margin: 0; }
+    .layer h3 { font-size: 1.85rem; letter-spacing: -.02em; margin-top: 8px; }
+    .layer .body { max-width: 40rem; margin: 16px 0 0; color: var(--muted); line-height: 1.6; }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; padding: 0; list-style: none; }
+    .pills li { border-radius: 999px; background: var(--raised); padding: 6px 12px; font-size: .875rem; box-shadow: var(--shadow); }
+    @media (min-width: 768px) {
+      .layer { padding: 48px; }
+      .layer-grid { grid-template-columns: 140px 1fr; gap: 48px; }
+      .num { font-size: 3.75rem; }
+    }
+
+    .work { padding: 64px 0 40px; }
+    .work-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; align-items: flex-end; }
+    .work-head p { max-width: 22rem; color: var(--muted); margin: 0; }
+    .scroller { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 40px 20px 16px; scrollbar-width: none; }
+    .scroller::-webkit-scrollbar { display: none; }
+    .card { min-width: 78vw; max-width: 340px; scroll-snap-align: start; border-radius: 24px; background: var(--surface); padding: 28px; box-shadow: var(--shadow); transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 180ms var(--ease), box-shadow 180ms var(--ease); }
+    .card:hover { box-shadow: 0 0 0 1px rgba(243, 239, 232, 0.16); }
+    @media (min-width: 768px) { .card { min-width: 340px; } }
+    .card .meta { font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
+    .card h3 { margin-top: 16px; font-size: 1.6rem; }
+    .card p { margin: 12px 0 0; color: var(--muted); font-size: .9rem; line-height: 1.55; max-width: 20rem; }
+
+    .marquee { overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 20px 0; margin-top: 48px; }
+    .track { display: flex; width: max-content; gap: 40px; animation: marquee 38s linear infinite; font-size: .85rem; letter-spacing: .18em; text-transform: uppercase; color: var(--faint); }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .slash { color: var(--accent); }
+
+    .films { padding: 24px 0 72px; }
+    .films-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; align-items: end; }
+    .film-btns { display: flex; gap: 8px; }
+    .film-btns button {
+      width: 44px; height: 44px; border: 0; border-radius: 999px; background: var(--surface);
+      color: var(--fg); box-shadow: var(--shadow); font-size: 1.1rem; transition: background-color 150ms var(--ease), transform 150ms var(--ease);
+    }
+    .film-btns button:hover { background: var(--raised); }
+    .film-btns button:active { transform: scale(.96); }
+    .film-scroller {
+      display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+      padding: 28px 20px 8px; scrollbar-width: none;
+    }
+    .film-scroller::-webkit-scrollbar { display: none; }
+    .film {
+      flex: 0 0 78vw; max-width: 520px; scroll-snap-align: start; border: 0; padding: 0;
+      background: var(--surface); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow);
+      text-align: left; position: relative;
+    }
+    @media (min-width: 768px) { .film { flex-basis: 520px; } }
+    .film video, .film img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: var(--raised); }
+    .film .meta {
+      position: absolute; inset: auto 0 0; padding: 48px 18px 16px;
+      background: linear-gradient(to top, var(--bg), color-mix(in oklab, var(--bg) 40%, transparent), transparent);
+    }
+    .film .meta p { margin: 0; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+    .film .meta h3 { margin: 6px 0 0; font-size: 1.25rem; }
+    .play {
+      position: absolute; top: 50%; left: 50%; width: 52px; height: 52px; margin: -26px 0 0 -26px;
+      border-radius: 999px; background: color-mix(in oklab, var(--bg) 45%, transparent);
+      box-shadow: var(--shadow); display: grid; place-items: center; pointer-events: none;
+    }
+    .play::after {
+      content: ""; width: 0; height: 0; border-style: solid;
+      border-width: 8px 0 8px 14px; border-color: transparent transparent transparent var(--fg); margin-left: 3px;
+    }
+    .vidbox { position: fixed; inset: 0; z-index: 92; background: color-mix(in oklab, var(--bg) 86%, transparent); display: none; align-items: center; justify-content: center; padding: 20px; }
+    .vidbox.open { display: flex; }
+    .vidbox video { width: min(960px, 100%); max-height: 86dvh; border-radius: 12px; background: #000; }
+
+    .journey { padding: 80px 0; }
+    .journey .display + p { max-width: 40rem; margin: 20px 0 0; color: var(--muted); font-size: 1.1rem; line-height: 1.6; }
+    .steps { list-style: none; padding: 0; margin: 48px 0 0; display: grid; gap: 12px; }
+    .step { border-radius: 24px; background: var(--surface); padding: 24px 20px; box-shadow: var(--shadow); }
+    .when { font-size: .8rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin: 0; }
+    .place { display: block; margin-top: 4px; font-family: var(--sans); font-size: 1rem; font-weight: 500; color: var(--muted); }
+    .step p { margin: 12px 0 0; color: var(--muted); line-height: 1.6; }
+    @media (min-width: 768px) {
+      .step { display: grid; grid-template-columns: 9rem 1fr; gap: 40px; padding: 32px; }
+    }
+
+    .impact { padding: 0 0 96px; }
+    .grid-2 { display: grid; gap: 16px; }
+    @media (min-width: 768px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+    .photo-lg { border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); background: var(--surface); }
+    @media (min-width: 768px) { .photo-lg { grid-row: span 2; } }
+    .photo-lg img { width: 100%; height: 100%; min-height: 280px; object-fit: cover; object-position: center; }
+    .wall { display: grid; grid-template-columns: 1fr 1fr; height: 288px; overflow: hidden; border-radius: 20px; background: var(--line); box-shadow: var(--shadow); }
+    .cell { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; justify-content: center; }
+    .cell.span { grid-column: span 2; }
+    .cell strong { font-family: var(--display); font-size: 1.45rem; font-weight: 500; color: var(--accent); letter-spacing: -.03em; }
+    .cell span { font-size: .8rem; font-weight: 500; margin-top: 4px; }
+    .cell small { color: var(--muted); font-size: .75rem; margin-top: 2px; }
+    .wall.in .cell { animation: pop 600ms var(--ease) both; }
+    .wall.in .cell:nth-child(1) { animation-delay: 40ms; }
+    .wall.in .cell:nth-child(2) { animation-delay: 90ms; }
+    .wall.in .cell:nth-child(3) { animation-delay: 140ms; }
+    .wall.in .cell:nth-child(4) { animation-delay: 190ms; }
+    .wall.in .cell:nth-child(5) { animation-delay: 240ms; }
+    @keyframes pop { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+    .connect { padding: 0 0 96px; }
+    .connect-grid { display: grid; gap: 40px; }
+    @media (min-width: 768px) { .connect-grid { grid-template-columns: .9fr 1.1fr; gap: 64px; align-items: start; } }
+    .mail { color: var(--accent); font-size: 1.05rem; font-weight: 500; }
+    .mail:hover { text-decoration: underline; }
+    form { display: grid; gap: 14px; }
+    .row { display: grid; gap: 14px; }
+    @media (min-width: 640px) { .row { grid-template-columns: 1fr 1fr; } }
+    label { display: grid; gap: 6px; font-size: .75rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    input, textarea {
+      width: 100%; font: inherit; color: var(--fg); background: var(--raised);
+      border: 0; box-shadow: var(--shadow); border-radius: 12px; padding: 14px 16px;
+      min-height: 48px; outline: none; transition: box-shadow 180ms var(--ease);
+    }
+    textarea { min-height: 140px; resize: vertical; }
+    input:focus, textarea:focus { box-shadow: 0 0 0 1px color-mix(in oklab, var(--accent) 55%, transparent); }
+    .send {
+      justify-self: start; border: 0; border-radius: 999px; background: var(--fg); color: var(--bg);
+      padding: 14px 28px; font-weight: 600; min-height: 48px; transition: transform 150ms var(--ease), background-color 150ms var(--ease);
+    }
+    .send:hover { background: var(--accent); }
+    .send:active { transform: scale(.96); }
+    .send[disabled] { opacity: .6; }
+    .note { margin: 8px 0 0; font-size: .9rem; color: var(--accent); min-height: 1.2em; }
+    .award { position: relative; border: 0; padding: 0; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); text-align: left; }
+    .award img { width: 100%; height: 256px; object-fit: cover; }
+    .award figcaption, .award .cap { position: absolute; inset: auto 0 0; padding: 20px; background: linear-gradient(to top, var(--bg), color-mix(in oklab, var(--bg) 50%, transparent), transparent); font-size: .875rem; }
+    .fridays { margin-top: 40px; border-radius: 20px; background: var(--surface); padding: 28px; box-shadow: var(--shadow); display: grid; gap: 24px; }
+    @media (min-width: 768px) { .fridays { grid-template-columns: 1.2fr .8fr; padding: 40px; } }
+    .fridays h3 { font-size: 1.75rem; }
+    .fridays p { margin: 12px 0 0; color: var(--muted); line-height: 1.6; }
+    .checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+    .checks li { display: flex; align-items: center; gap: 12px; }
+    .dot { width: 6px; height: 6px; border-radius: 99px; background: var(--accent); }
+
+    .lightbox { position: fixed; inset: 0; z-index: 90; background: color-mix(in oklab, var(--bg) 80%, transparent); display: none; align-items: center; justify-content: center; padding: 16px; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-height: 88dvh; width: auto; max-width: 100%; border-radius: 8px; }
+
+    footer { border-top: 1px solid var(--line); padding: 48px 0; }
+    .foot { display: flex; flex-direction: column; gap: 32px; }
+    @media (min-width: 768px) { .foot { flex-direction: row; align-items: flex-end; justify-content: space-between; } }
+    .foot .name { font-family: var(--display); font-size: 2.25rem; }
+    .foot .name em { font-style: italic; color: var(--accent); }
+    .muted { color: var(--muted); }
+    .faint { color: var(--faint); font-size: .875rem; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .hero-photo, .track, .orb, .shine { animation: none !important; }
+      .reveal, .stagger > *, .wall .cell { opacity: 1 !important; transform: none !important; filter: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="orbs" aria-hidden="true"><div class="orb a"></div><div class="orb b"></div></div>
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <header>
+    <div class="wrap">
+      <div class="nav-row">
+        <a class="brand" href="#top">Sanam Hera</a>
+        <nav class="nav-links">
+          <a href="#layers">Layers</a>
+          <a href="#work">Work</a>
+          <a href="#films">Films</a>
+          <a href="#journey">Journey</a>
+          <a href="#impact">Impact</a>
+          <a href="#connect">Connect</a>
+        </nav>
+        <a class="cta" href="#connect">Work with me</a>
+      </div>
+      <nav class="nav-mobile">
+        <a href="#layers">Layers</a>
+        <a href="#work">Work</a>
+        <a href="#films">Films</a>
+        <a href="#journey">Journey</a>
+        <a href="#impact">Impact</a>
+        <a href="#connect">Connect</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="top">
+      <img class="hero-photo" src="images/portrait.png" alt="" aria-hidden="true" />
+      <div class="hero-scrim"></div>
+      <div class="shine" aria-hidden="true"></div>
+      <div class="wrap hero-copy">
+        <p class="kicker">NACL Industries · AI Innovation</p>
+        <h1>Sanam<em>Hera</em></h1>
+        <p class="lede">Project Manager & AI Innovation Lead. I work at the intersection of business strategy, enterprise operations, AI product, and change.</p>
+        <p class="disciplines">Business Strategy · Enterprise Operations · AI Product Building · Change Management</p>
+        <div class="chips">
+          <span class="chip">AI Innovation Lead</span>
+          <span class="chip">PMO Digitization</span>
+          <span class="chip">Reporting to CIO</span>
+          <span class="chip">MBA, IIT Madras</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap manifesto reveal">
+      <p class="kicker">The brief</p>
+      <blockquote class="quote">I design systems that help organizations make better decisions, move faster, and scale execution. Sometimes that system is AI. Sometimes it's governance. Sometimes it's a workflow. The goal is always the same: turning complexity into action.</blockquote>
+    </section>
+
+    <section class="wrap" id="layers">
+      <div class="section-head reveal">
+        <p class="kicker">What makes me different</p>
+        <h2 class="display">Five layers. One way of working.</h2>
+      </div>
+
+      <article class="layer" style="top: 5.5rem; z-index: 1;">
+        <div class="layer-grid">
+          <p class="num">01</p>
+          <div>
+            <p class="kicker">Layer 1</p>
+            <h3>Enterprise Transformation</h3>
+            <p class="body">I sit where strategy meets the operating system of the company. AI Innovation Lead. PMO digitization. Reporting to the CIO. Working directly with business leaders. Driving organizational change that actually sticks.</p>
+            <ul class="pills">
+              <li>AI Innovation Lead</li>
+              <li>PMO Digitization</li>
+              <li>Reporting to CIO</li>
+              <li>Working directly with business leaders</li>
+              <li>Driving organizational change</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+      <article class="layer" style="top: 6.65rem; z-index: 2;">
+        <div class="layer-grid">
+          <p class="num">02</p>
+          <div>
+            <p class="kicker">Layer 2</p>
+            <h3>Product Thinking</h3>
+            <p class="body">I have designed and developed production products that people use — not slideware. Decision systems, intelligence layers, copilots, and workflow engines across finance, sales, HR, and operations.</p>
+            <ul class="pills">
+              <li>ASTRA</li><li>AI CFO</li><li>AI Fridays</li><li>Dealer Intelligence</li><li>Budget Intelligence Platform</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+      <article class="layer" style="top: 7.8rem; z-index: 3;">
+        <div class="layer-grid">
+          <p class="num">03</p>
+          <div>
+            <p class="kicker">Layer 3</p>
+            <h3>Technical Execution</h3>
+            <p class="body">I actually build. Not just PowerPoints. Full-stack product work, API integrations, cloud deployments, and AI layers wired into real enterprise systems.</p>
+            <ul class="pills">
+              <li>React & Firebase</li><li>Gemini & Claude</li><li>Power BI</li><li>Microsoft Graph & SharePoint</li><li>MongoDB & cloud deployments</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+      <article class="layer" style="top: 8.95rem; z-index: 4;">
+        <div class="layer-grid">
+          <p class="num">04</p>
+          <div>
+            <p class="kicker">Layer 4</p>
+            <h3>Enterprise Governance</h3>
+            <p class="body">Very few AI people understand this layer. I have worked on the control systems that let innovation scale without chaos — authority, policy, procurement, approvals, and risk.</p>
+            <ul class="pills">
+              <li>Delegation of Authority</li><li>IT Policies</li><li>Governance Frameworks</li><li>Procurement Workflows</li><li>Approval Engines & Risk Controls</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+      <article class="layer" style="top: 10.1rem; z-index: 5;">
+        <div class="layer-grid">
+          <p class="num">05</p>
+          <div>
+            <p class="kicker">Layer 5 · Hidden skill</p>
+            <h3>Change Management</h3>
+            <p class="body">Transformation fails in the last mile: people. I design the enablement that makes new systems real — from AI Fridays to executive rooms to shop-floor adoption.</p>
+            <ul class="pills">
+              <li>AI Fridays — 100+ employees across functions</li>
+              <li>Cross-functional adoption</li>
+              <li>Executive presentations</li>
+              <li>Training programs</li>
+              <li>Business stakeholder engagement</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+      <div style="height: 96px;"></div>
+    </section>
+
+    <section class="work" id="work">
+      <div class="wrap work-head">
+        <div>
+          <p class="kicker">Product thinking</p>
+          <h2 class="display">Things I have actually shipped.</h2>
+        </div>
+        <p>Designed and developed in production — copilots, intelligence layers, governance tools, and workflow products.</p>
+      </div>
+      <div class="scroller">
+        <article class="card" data-tilt><p class="meta">01 · Enterprise intelligence</p><h3>ASTRA</h3><p>An operating layer for turning scattered enterprise signals into decisions the business can act on.</p></article>
+        <article class="card" data-tilt><p class="meta">02 · Finance</p><h3>AI CFO</h3><p>A finance copilot that compresses analysis cycles — from raw ledgers to executive-ready insight.</p></article>
+        <article class="card" data-tilt><p class="meta">03 · Enablement</p><h3>AI Fridays</h3><p>Org-wide AI enablement attended by 100+ employees and senior management — learning how to use AI efficiently in the work they already do.</p></article>
+        <article class="card" data-tilt><p class="meta">04 · Sales</p><h3>Dealer Intelligence</h3><p>A commercial brain for dealer networks — performance, exceptions, and next-best actions.</p></article>
+        <article class="card" data-tilt><p class="meta">05 · Planning · Gemini API</p><h3>Budget Intelligence</h3><p>A budget platform with Gemini as the intelligence layer — variance, narrative, and scenario thinking.</p></article>
+        <article class="card" data-tilt><p class="meta">06 · Responsible AI</p><h3>AI Safe Mode</h3><p>Guardrails that let teams use AI inside enterprise policy — not around it.</p></article>
+        <article class="card" data-tilt><p class="meta">07 · Procurement</p><h3>Vendor Verification</h3><p>A verification workflow that reduces risk before spend, with controls the business can trust.</p></article>
+        <article class="card" data-tilt><p class="meta">08 · Operations</p><h3>WhatsApp Ticketing</h3><p>Support and ops intake where people already work — turning messages into tracked work.</p></article>
+        <article class="card" data-tilt><p class="meta">09 · Experience</p><h3>Aura Frame</h3><p>A visual product for turning moments into a living, intelligent frame.</p></article>
+        <article class="card" data-tilt><p class="meta">10 · Maps · Google Maps API</p><h3>GeoLocation Identifier</h3><p>Location intelligence wired into Google Maps — identify, contextualize, act.</p></article>
+      </div>
+      <div class="marquee">
+        <div class="track" id="track"></div>
+      </div>
+    </section>
+
+    <section class="films" id="films">
+      <div class="wrap films-head">
+        <div>
+          <p class="kicker">AI video & social</p>
+          <h2 class="display">Work in motion.</h2>
+          <p class="muted" style="margin:12px 0 0; max-width:28rem;">Cinematic previews — heritage, enablement, social, and enterprise films. Hover to play. Open to watch. Next to keep moving.</p>
+        </div>
+        <div class="film-btns">
+          <button type="button" id="filmPrev" aria-label="Previous film">‹</button>
+          <button type="button" id="filmNext" aria-label="Next film">›</button>
+        </div>
+      </div>
+      <div class="film-scroller" id="filmScroller">
+        <button type="button" class="film" data-src="videos/banyan.mp4" data-title="Heritage mark">
+          <video muted playsinline loop preload="metadata" poster="videos/banyan.jpg" src="videos/banyan.mp4"></video>
+          <span class="play"></span>
+          <span class="meta"><p>01 · Heritage</p><h3>Banyan cinematic</h3></span>
+        </button>
+        <button type="button" class="film" data-src="videos/nacl-fields.mp4" data-title="Growing with Care">
+          <video muted playsinline loop preload="metadata" poster="videos/nacl-fields.jpg" src="videos/nacl-fields.mp4"></video>
+          <span class="play"></span>
+          <span class="meta"><p>02 · NACL</p><h3>Growing with Care</h3></span>
+        </button>
+        <button type="button" class="film" data-src="videos/ai-fridays.mp4" data-title="AI Fridays">
+          <video muted playsinline loop preload="metadata" poster="videos/ai-fridays.jpg" src="videos/ai-fridays.mp4"></video>
+          <span class="play"></span>
+          <span class="meta"><p>03 · Enablement</p><h3>AI Fridays</h3></span>
+        </button>
+        <button type="button" class="film" data-src="videos/social.mp4" data-title="Social enablement">
+          <video muted playsinline loop preload="metadata" poster="videos/social.jpg" src="videos/social.mp4"></video>
+          <span class="play"></span>
+          <span class="meta"><p>04 · Social</p><h3>Content studio</h3></span>
+        </button>
+        <button type="button" class="film" data-src="videos/phoenix.mp4" data-title="Phoenix Meet">
+          <video muted playsinline loop preload="metadata" poster="videos/phoenix.jpg" src="videos/phoenix.mp4"></video>
+          <span class="play"></span>
+          <span class="meta"><p>05 · Award</p><h3>Phoenix Meet</h3></span>
+        </button>
+        <button type="button" class="film" data-src="videos/impact.mp4" data-title="Intelligent Impact">
+          <video muted playsinline loop preload="metadata" poster="videos/impact.jpg" src="videos/impact.mp4"></video>
+          <span class="play"></span>
+          <span class="meta"><p>06 · Enterprise</p><h3>Intelligent Impact</h3></span>
+        </button>
+      </div>
+    </section>
+
+    <section class="wrap journey" id="journey">
+      <p class="kicker">The path</p>
+      <h2 class="display">Never one function. Always the intersection.</h2>
+      <p>People from HR. Process from consulting. Product thinking from business analysis. Innovation through AI. Each chapter is still in the work.</p>
+      <ol class="steps">
+        <li class="step">
+          <p class="when">Now</p>
+          <div>
+            <h3>AI Innovation & Transformation<span class="place">NACL Industries</span></h3>
+            <p>I lead AI innovation and transformation at the intersection of business strategy, technology, and organizational change. The work spans AI adoption, enterprise digitization, product development, governance, and process transformation — across Sales, Manufacturing, Finance, Procurement, HR, and R&D.</p>
+          </div>
+        </li>
+        <li class="step">
+          <p class="when">Before</p>
+          <div>
+            <h3>Business Analyst<span class="place">nurture.farm</span></h3>
+            <p>I partnered with business and technology teams to translate complex requirements into scalable digital solutions. This is where product thinking sharpened — user needs, measurable value, shipping software that holds up in the real world.</p>
+          </div>
+        </li>
+        <li class="step">
+          <p class="when">Earlier</p>
+          <div>
+            <h3>Consultant<span class="place">Infosys</span></h3>
+            <p>Large-scale enterprise environments and digital transformation. Diverse stakeholders, complex processes, structured problem solving, and the discipline required to deliver change inside big organizations.</p>
+          </div>
+        </li>
+        <li class="step">
+          <p class="when">Origin</p>
+          <div>
+            <h3>HR Manager<span class="place">QuantOne Technologies Ltd.</span></h3>
+            <p>People, talent, and organizational process. This chapter is why I still treat transformation as a human system — technology only works when teams can actually live inside it.</p>
+          </div>
+        </li>
+        <li class="step">
+          <p class="when">Foundation</p>
+          <div>
+            <h3>MBA<span class="place">IIT Madras</span></h3>
+            <p>Business strategy, finance, operations, and technology — a single frame for how organizations create value. From Asansol, West Bengal. Always learning.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="wrap impact" id="impact">
+      <div class="section-head reveal">
+        <p class="kicker">Impact, in the room</p>
+        <h2 class="display">AI Fridays. Phoenix Meet. Systems that ship.</h2>
+      </div>
+      <div class="grid-2">
+        <figure class="photo-lg">
+          <img src="images/desk.jpeg" alt="Sanam Hera at her desk with a coffee mug" />
+        </figure>
+        <aside class="wall reveal" aria-label="Impact wall">
+          <div class="cell"><strong data-count="8">8+</strong><span>Years</span><small>Enterprise Transformation</small></div>
+          <div class="cell"><strong data-count="100">100+</strong><span>Employees trained on AI</span></div>
+          <div class="cell"><strong data-count="10">10+</strong><span>AI systems designed</span></div>
+          <div class="cell"><strong>Multiple</strong><span>Functions</span><small>Finance · Sales · Manufacturing · HR</small></div>
+          <div class="cell span"><strong>Award Winner</strong><span>Phoenix Meet Q4 FY25-26</span></div>
+        </aside>
+        <button class="award" type="button" id="openAward">
+          <img src="images/award.jpeg" alt="Phoenix Meet Q4 FY25-26 award and certificate" />
+          <span class="cap">Winner, Phoenix Meet Q4 FY25-26 · NACL & Murugappa</span>
+        </button>
+      </div>
+      <div class="fridays reveal">
+        <div>
+          <h3>AI Fridays</h3>
+          <p>An enablement program I run for the organization. Finance, R&D, Regulatory, Operations, Sales, Marketing, EHS — more than a hundred people in the room, learning how to use AI in the work they already do.</p>
+        </div>
+        <ul class="checks">
+          <li><span class="dot"></span>Drive synergies</li>
+          <li><span class="dot"></span>Build AI solutions</li>
+          <li><span class="dot"></span>Enable teams</li>
+          <li><span class="dot"></span>Create impact</li>
+          <li><span class="dot"></span>Learn and grow</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="wrap connect" id="connect">
+      <div class="connect-grid">
+        <div class="reveal">
+          <p class="kicker">Reach out to me</p>
+          <h2 class="display">Let’s build the next system together.</h2>
+          <p class="lede" style="color: var(--muted); font-size: 1.05rem;">
+            Name, email, subject, message — it lands directly with me.
+          </p>
+          <p style="margin: 20px 0 0;">
+            <a class="mail" href="mailto:connect@sanamhera.com">connect@sanamhera.com</a>
+          </p>
+        </div>
+        <form class="reveal" id="contact" novalidate>
+          <div class="row">
+            <label>Name
+              <input name="name" type="text" autocomplete="name" required placeholder="Your name" />
+            </label>
+            <label>Email
+              <input name="email" type="email" autocomplete="email" required placeholder="you@company.com" />
+            </label>
+          </div>
+          <label>Subject
+            <input name="subject" type="text" required placeholder="What should we talk about?" />
+          </label>
+          <label>Message
+            <textarea name="message" required placeholder="Context, problem, timeline…"></textarea>
+          </label>
+          <button class="send" type="submit">Send</button>
+          <p class="note" id="formNote" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <div>
+        <p class="name">Sanam <em>Hera</em></p>
+        <p class="muted" style="max-width:22rem; margin:12px 0 0; font-size:.9rem; line-height:1.55;">Project Manager & AI Innovation Lead. Building systems that help organizations decide, move, and scale.</p>
+      </div>
+      <p class="faint">NACL Industries · Hyderabad</p>
+    </div>
+  </footer>
+
+  <div class="vidbox" id="vidbox" role="dialog" aria-modal="true" aria-label="Film preview">
+    <video id="vidPlayer" controls playsinline></video>
+  </div>
+
+  <script>
+    const stack = ["React","Firebase","Gemini","Claude","Power BI","Microsoft Graph","SharePoint","APIs","Cloud deployments","MongoDB","Cursor + Claude Code"];
+    const track = document.getElementById("track");
+    track.innerHTML = [...stack, ...stack].map((s) => `<span>${s} <span class="slash">/</span></span>`).join("");
+
+    const progress = document.getElementById("progress");
+    window.addEventListener("scroll", () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.setProperty("--progress", String(max > 0 ? window.scrollY / max : 0));
+    }, { passive: true });
+
+    document.querySelectorAll("[data-tilt]").forEach((el) => {
+      el.addEventListener("pointermove", (e) => {
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width;
+        const y = (e.clientY - r.top) / r.height;
+        el.style.setProperty("--rx", ((0.5 - y) * 8) + "deg");
+        el.style.setProperty("--ry", ((x - 0.5) * 10) + "deg");
+      });
+      el.addEventListener("pointerleave", () => {
+        el.style.setProperty("--rx", "0deg");
+        el.style.setProperty("--ry", "0deg");
+      });
+    });
+
+    const box = document.getElementById("lightbox");
+    document.getElementById("openAward").addEventListener("click", () => box.classList.add("open"));
+    box.addEventListener("click", () => box.classList.remove("open"));
+
+    const films = document.getElementById("filmScroller");
+    document.getElementById("filmNext").addEventListener("click", () => {
+      films.scrollBy({ left: Math.min(540, films.clientWidth * 0.85), behavior: "smooth" });
+    });
+    document.getElementById("filmPrev").addEventListener("click", () => {
+      films.scrollBy({ left: -Math.min(540, films.clientWidth * 0.85), behavior: "smooth" });
+    });
+    films.querySelectorAll(".film").forEach((card) => {
+      const v = card.querySelector("video");
+      card.addEventListener("pointerenter", () => { v.play().catch(() => {}); });
+      card.addEventListener("pointerleave", () => { v.pause(); });
+      card.addEventListener("click", () => {
+        const player = document.getElementById("vidPlayer");
+        const frame = document.getElementById("vidbox");
+        player.src = card.getAttribute("data-src");
+        frame.classList.add("open");
+        player.play().catch(() => {});
+      });
+    });
+    document.getElementById("vidbox").addEventListener("click", (e) => {
+      if (e.target.id !== "vidPlayer") {
+        const player = document.getElementById("vidPlayer");
+        player.pause();
+        player.removeAttribute("src");
+        player.load();
+        e.currentTarget.classList.remove("open");
+      }
+    });
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add("in");
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.16 });
+    document.querySelectorAll(".reveal, .wall").forEach((el) => io.observe(el));
+    if (reduce) document.querySelectorAll(".reveal, .wall").forEach((el) => el.classList.add("in"));
+
+    document.querySelectorAll("[data-count]").forEach((el) => {
+      const target = Number(el.getAttribute("data-count"));
+      const wall = el.closest(".wall");
+      const run = () => {
+        if (reduce) return;
+        const start = performance.now();
+        const tick = (now) => {
+          const t = Math.min(1, (now - start) / 900);
+          const eased = 1 - Math.pow(1 - t, 3);
+          el.textContent = Math.round(target * eased) + "+";
+          if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      };
+      const wio = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          run();
+          wio.disconnect();
+        }
+      }, { threshold: 0.4 });
+      wio.observe(wall);
+    });
+
+    const scroller = document.querySelector(".scroller");
+    let vx = 0.45;
+    let paused = false;
+    scroller.addEventListener("pointerenter", () => { paused = true; });
+    scroller.addEventListener("pointerleave", () => { paused = false; });
+    const drift = () => {
+      if (!paused && !reduce) {
+        scroller.scrollLeft += vx;
+        const max = scroller.scrollWidth - scroller.clientWidth;
+        if (scroller.scrollLeft >= max - 1) vx = -0.45;
+        if (scroller.scrollLeft <= 0) vx = 0.45;
+      }
+      requestAnimationFrame(drift);
+    };
+    requestAnimationFrame(drift);
+
+    const fine = window.matchMedia("(pointer: fine)").matches;
+    const cursor = document.getElementById("cursor");
+    if (fine && !reduce) {
+      document.documentElement.classList.add("cursor-on");
+      let x = -40, y = -40, tx = x, ty = y;
+      const loop = () => {
+        x += (tx - x) * 0.22;
+        y += (ty - y) * 0.22;
+        cursor.style.setProperty("--cx", x + "px");
+        cursor.style.setProperty("--cy", y + "px");
+        requestAnimationFrame(loop);
+      };
+      requestAnimationFrame(loop);
+      window.addEventListener("pointermove", (e) => {
+        tx = e.clientX;
+        ty = e.clientY;
+        const hot = e.target.closest("a, button, input, textarea, [data-tilt]");
+        cursor.classList.toggle("hot", Boolean(hot));
+      }, { passive: true });
+    }
+
+    const form = document.getElementById("contact");
+    const note = document.getElementById("formNote");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const name = String(data.get("name") || "").trim();
+      const email = String(data.get("email") || "").trim();
+      const subject = String(data.get("subject") || "").trim();
+      const message = String(data.get("message") || "").trim();
+      if (!name || !email || !subject || !message) {
+        note.textContent = "Please fill in every field.";
+        return;
+      }
+      const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
+      const href = `mailto:connect@sanamhera.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      note.textContent = "Opening your email to connect@sanamhera.com";
+      window.location.href = href;
+    });
+  </script>
+</body>
+</html>
