@@ -342,10 +342,10 @@
     .reel-row { position: relative; margin-top: 8px; }
     .reel-scroller { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 44px 16px 20px; scrollbar-width: none; }
     .reel-scroller::-webkit-scrollbar { display: none; }
-    .vcard { min-width: 72vw; max-width: 300px; scroll-snap-align: start; border-radius: 24px; background: var(--surface); padding: 16px; box-shadow: var(--shadow); transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 180ms var(--ease), box-shadow 180ms var(--ease); }
+    .vcard { min-width: 82vw; max-width: 440px; scroll-snap-align: start; border-radius: 24px; background: var(--surface); padding: 16px; box-shadow: var(--shadow); transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 180ms var(--ease), box-shadow 180ms var(--ease); }
     .vcard:hover { box-shadow: 0 0 0 1px rgba(243, 239, 232, 0.16); }
-    @media (min-width: 768px) { .vcard { min-width: 280px; } }
-    .vcard-media { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; background: var(--raised); border: 0; padding: 0; cursor: pointer; }
+    @media (min-width: 768px) { .vcard { min-width: 420px; max-width: 460px; } }
+    .vcard-media { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: var(--raised); border: 0; padding: 0; cursor: pointer; }
     .vcard-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
     .vcard-glyph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; transition: opacity 180ms var(--ease); }
     .vcard-media:hover .vcard-glyph { opacity: 0; }
