@@ -660,7 +660,7 @@
         <p class="name">Sanam <em>Hera</em></p>
         <p class="muted" style="max-width:22rem; margin:12px 0 0; font-size:.9rem; line-height:1.55;">Project Manager & AI Innovation Lead. Building systems that help organizations decide, move, and scale.</p>
       </div>
-      <p class="faint">NACL Industries · Hyderabad · <a href="/admin.html">Studio</a></p>
+      <p class="faint">Hyderabad · <a href="/admin.html">Studio</a></p>
     </div>
   </footer>
 
@@ -785,20 +785,42 @@
       { src: "videos/video-6.mp4", kicker: "06 · Film", title: "", description: "", present: false }
     ];
     function bindFilms() {
+      const armVideo = (vid) => {
+        const src = vid.dataset.src;
+        if (!src || vid.dataset.armed === "1") return Promise.resolve();
+        vid.dataset.armed = "1";
+        vid.src = src;
+        vid.load();
+        return new Promise((resolve) => {
+          const done = () => resolve();
+          vid.addEventListener("loadeddata", done, { once: true });
+          setTimeout(done, 5000);
+        });
+      };
       document.querySelectorAll(".vcard").forEach((card) => {
         const vid = card.querySelector("video");
         const media = card.querySelector(".vcard-media");
         if (!vid || !media) return;
-        card.addEventListener("pointerenter", () => { vid.play().catch(() => {}); });
-        card.addEventListener("pointerleave", () => { vid.pause(); vid.currentTime = 0; });
+        card.addEventListener("pointerenter", () => {
+          armVideo(vid).then(() => vid.play().catch(() => {}));
+        });
+        card.addEventListener("pointerleave", () => { vid.pause(); });
         media.addEventListener("click", () => {
-          const full = vid.getAttribute("data-full") || vid.currentSrc;
+          const full = vid.getAttribute("data-full") || vid.dataset.src;
           videoPlayer.src = full;
           videoBox.classList.add("open");
           videoPlayer.currentTime = 0;
           videoPlayer.play().catch(() => {});
         });
       });
+      const lazy = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const vid = e.target.querySelector("video");
+          if (vid) armVideo(vid);
+        });
+      }, { root: reelScroller, rootMargin: "120px", threshold: 0.01 });
+      document.querySelectorAll(".vcard").forEach((card) => lazy.observe(card));
     }
     function renderFilms(list) {
       const films = (list || []).filter((v) => v && v.present !== false);
@@ -815,12 +837,10 @@
         vid.muted = true;
         vid.loop = true;
         vid.playsInline = true;
+        vid.poster = (v.src || "").replace(/\.mp4$/i, ".jpg");
         vid.preload = "none";
         vid.setAttribute("data-full", v.src || "");
-        const source = document.createElement("source");
-        source.src = v.src || "";
-        source.type = "video/mp4";
-        vid.appendChild(source);
+        vid.dataset.src = v.src || "";
         const glyph = document.createElement("span");
         glyph.className = "vcard-glyph";
         glyph.setAttribute("aria-hidden", "true");
