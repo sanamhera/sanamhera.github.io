@@ -62,8 +62,9 @@
     .shine { pointer-events: none; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 35%, color-mix(in oklab, var(--fg) 14%, transparent) 50%, transparent 65%); transform: translateX(-100%); animation: shine 7.5s var(--ease) infinite; mix-blend-mode: screen; }
     @keyframes shine { 0%, 55% { transform: translateX(-120%); } 75%, 100% { transform: translateX(120%); } }
 
-    .reveal { opacity: 0; transform: translateY(24px); filter: blur(6px); transition: opacity 700ms var(--ease), transform 700ms var(--ease), filter 700ms var(--ease); }
-    .reveal.in { opacity: 1; transform: none; filter: none; }
+    .reveal { opacity: 1; transform: none; filter: none; }
+    html.js .reveal { opacity: 0; transform: translateY(24px); filter: blur(6px); transition: opacity 700ms var(--ease), transform 700ms var(--ease), filter 700ms var(--ease); }
+    html.js .reveal.in { opacity: 1; transform: none; filter: none; }
     .stagger > * { opacity: 0; transform: translateY(16px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
     .stagger.in > *:nth-child(1) { transition-delay: 40ms; }
     .stagger.in > *:nth-child(2) { transition-delay: 90ms; }
@@ -675,6 +676,7 @@
     const stack = ["React","Firebase","Gemini","Claude","Power BI","Microsoft Graph","SharePoint","APIs","Cloud deployments","MongoDB","Cursor + Claude Code"];
     const track = document.getElementById("track");
     track.innerHTML = [...stack, ...stack].map((s) => `<span>${s} <span class="slash">/</span></span>`).join("");
+    document.documentElement.classList.add("js");
 
     const progress = document.getElementById("progress");
     window.addEventListener("scroll", () => {
@@ -786,6 +788,7 @@
       document.querySelectorAll(".vcard").forEach((card) => {
         const vid = card.querySelector("video");
         const media = card.querySelector(".vcard-media");
+        if (!vid || !media) return;
         card.addEventListener("pointerenter", () => { vid.play().catch(() => {}); });
         card.addEventListener("pointerleave", () => { vid.pause(); vid.currentTime = 0; });
         media.addEventListener("click", () => {
@@ -798,20 +801,44 @@
       });
     }
     function renderFilms(list) {
-      const esc = (s) => String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c]));
-      const films = list.filter((v) => v.present !== false);
-      reelScroller.innerHTML = films.map((v) => `
-          <article class="vcard" data-tilt>
-            <button class="vcard-media" type="button" aria-label="Play preview">
-              <video muted loop playsinline preload="metadata" data-full="${v.src}">
-                <source src="${v.src}" type="video/mp4" />
-              </video>
-              <span class="vcard-glyph" aria-hidden="true"></span>
-            </button>
-            <p class="meta">${esc(v.kicker)}</p>
-            <h3>${esc(v.title) || "Untitled cut"}</h3>
-            <p>${esc(v.description)}</p>
-          </article>`).join("");
+      const films = (list || []).filter((v) => v && v.present !== false);
+      reelScroller.replaceChildren();
+      films.forEach((v) => {
+        const card = document.createElement("article");
+        card.className = "vcard";
+        card.setAttribute("data-tilt", "");
+        const btn = document.createElement("button");
+        btn.className = "vcard-media";
+        btn.type = "button";
+        btn.setAttribute("aria-label", "Play preview");
+        const vid = document.createElement("video");
+        vid.muted = true;
+        vid.loop = true;
+        vid.playsInline = true;
+        vid.preload = "none";
+        vid.setAttribute("data-full", v.src || "");
+        const source = document.createElement("source");
+        source.src = v.src || "";
+        source.type = "video/mp4";
+        vid.appendChild(source);
+        const glyph = document.createElement("span");
+        glyph.className = "vcard-glyph";
+        glyph.setAttribute("aria-hidden", "true");
+        btn.appendChild(vid);
+        btn.appendChild(glyph);
+        const meta = document.createElement("p");
+        meta.className = "meta";
+        meta.textContent = v.kicker || "";
+        const h3 = document.createElement("h3");
+        h3.textContent = v.title || "Untitled cut";
+        const p = document.createElement("p");
+        p.textContent = v.description || "";
+        card.appendChild(btn);
+        card.appendChild(meta);
+        card.appendChild(h3);
+        card.appendChild(p);
+        reelScroller.appendChild(card);
+      });
       bindFilms();
     }
     renderFilms(DEFAULT_FILMS);
