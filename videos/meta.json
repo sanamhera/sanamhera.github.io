@@ -2,42 +2,42 @@
   "videos": [
     {
       "src": "videos/video-1.mp4",
-      "kicker": "01 · Google Flow",
+      "kicker": "01 Â· Google Flow",
       "title": "Untitled cut",
       "description": "Add a line on what this piece is about.",
       "present": true
     },
     {
       "src": "videos/video-2.mp4",
-      "kicker": "02 · Grok",
+      "kicker": "02 Â· Grok",
       "title": "Untitled cut",
       "description": "Add a line on what this piece is about.",
       "present": true
     },
     {
       "src": "videos/video-3.mp4",
-      "kicker": "03 · ElevenLabs",
+      "kicker": "03 Â· ElevenLabs",
       "title": "Untitled cut",
       "description": "Add a line on what this piece is about.",
       "present": true
     },
     {
       "src": "videos/video-4.mp4",
-      "kicker": "04 · Canva",
+      "kicker": "04 Â· Canva",
       "title": "Untitled cut",
       "description": "Add a line on what this piece is about.",
       "present": true
     },
     {
       "src": "videos/video-5.mp4",
-      "kicker": "05 · Film",
+      "kicker": "05 Â· Film",
       "title": "",
       "description": "",
-      "present": false
+      "present": true
     },
     {
       "src": "videos/video-6.mp4",
-      "kicker": "06 · Film",
+      "kicker": "06 Â· Film",
       "title": "",
       "description": "",
       "present": false
