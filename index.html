@@ -530,53 +530,7 @@
         <p style="max-width:36rem; margin:16px 0 0; color: var(--muted); font-size: 1.05rem; line-height: 1.55;">Cinematic previews — of some AI videos I created using Google Flow, Grok, ElevenLabs, and Canva. Hover to play. Open to watch. Next to keep moving.</p>
       </div>
       <div class="reel-row">
-        <div class="reel-scroller" id="reelScroller">
-          <!-- Replace each <source src="..."> and data-full="..." below with your actual video file or hosted URL. -->
-          <article class="vcard" data-tilt>
-            <button class="vcard-media" type="button" aria-label="Play preview">
-              <video muted loop playsinline preload="metadata" data-full="videos/video-1.mp4">
-                <source src="videos/video-1.mp4" type="video/mp4" />
-              </video>
-              <span class="vcard-glyph" aria-hidden="true"></span>
-            </button>
-            <p class="meta">01 · Google Flow</p>
-            <h3>Untitled cut</h3>
-            <p>Add a line on what this piece is about.</p>
-          </article>
-          <article class="vcard" data-tilt>
-            <button class="vcard-media" type="button" aria-label="Play preview">
-              <video muted loop playsinline preload="metadata" data-full="videos/video-2.mp4">
-                <source src="videos/video-2.mp4" type="video/mp4" />
-              </video>
-              <span class="vcard-glyph" aria-hidden="true"></span>
-            </button>
-            <p class="meta">02 · Grok</p>
-            <h3>Untitled cut</h3>
-            <p>Add a line on what this piece is about.</p>
-          </article>
-          <article class="vcard" data-tilt>
-            <button class="vcard-media" type="button" aria-label="Play preview">
-              <video muted loop playsinline preload="metadata" data-full="videos/video-3.mp4">
-                <source src="videos/video-3.mp4" type="video/mp4" />
-              </video>
-              <span class="vcard-glyph" aria-hidden="true"></span>
-            </button>
-            <p class="meta">03 · ElevenLabs</p>
-            <h3>Untitled cut</h3>
-            <p>Add a line on what this piece is about.</p>
-          </article>
-          <article class="vcard" data-tilt>
-            <button class="vcard-media" type="button" aria-label="Play preview">
-              <video muted loop playsinline preload="metadata" data-full="videos/video-4.mp4">
-                <source src="videos/video-4.mp4" type="video/mp4" />
-              </video>
-              <span class="vcard-glyph" aria-hidden="true"></span>
-            </button>
-            <p class="meta">04 · Canva</p>
-            <h3>Untitled cut</h3>
-            <p>Add a line on what this piece is about.</p>
-          </article>
-        </div>
+        <div class="reel-scroller" id="reelScroller"></div>
         <button class="reel-next" id="reelNext" type="button" aria-label="Next video">&rarr;</button>
       </div>
     </section>
@@ -819,19 +773,52 @@
 
     const videoBox = document.getElementById("videoLightbox");
     const videoPlayer = document.getElementById("videoLightboxPlayer");
-    document.querySelectorAll(".vcard").forEach((card) => {
-      const vid = card.querySelector("video");
-      const media = card.querySelector(".vcard-media");
-      card.addEventListener("pointerenter", () => { vid.play().catch(() => {}); });
-      card.addEventListener("pointerleave", () => { vid.pause(); vid.currentTime = 0; });
-      media.addEventListener("click", () => {
-        const full = vid.getAttribute("data-full") || vid.currentSrc;
-        videoPlayer.src = full;
-        videoBox.classList.add("open");
-        videoPlayer.currentTime = 0;
-        videoPlayer.play().catch(() => {});
+    const reelScroller = document.getElementById("reelScroller");
+    const DEFAULT_FILMS = [
+      { src: "videos/video-1.mp4", kicker: "01 · Google Flow", title: "Untitled cut", description: "Add a line on what this piece is about.", present: true },
+      { src: "videos/video-2.mp4", kicker: "02 · Grok", title: "Untitled cut", description: "Add a line on what this piece is about.", present: true },
+      { src: "videos/video-3.mp4", kicker: "03 · ElevenLabs", title: "Untitled cut", description: "Add a line on what this piece is about.", present: true },
+      { src: "videos/video-4.mp4", kicker: "04 · Canva", title: "Untitled cut", description: "Add a line on what this piece is about.", present: true },
+      { src: "videos/video-5.mp4", kicker: "05 · Film", title: "", description: "", present: false },
+      { src: "videos/video-6.mp4", kicker: "06 · Film", title: "", description: "", present: false }
+    ];
+    function bindFilms() {
+      document.querySelectorAll(".vcard").forEach((card) => {
+        const vid = card.querySelector("video");
+        const media = card.querySelector(".vcard-media");
+        card.addEventListener("pointerenter", () => { vid.play().catch(() => {}); });
+        card.addEventListener("pointerleave", () => { vid.pause(); vid.currentTime = 0; });
+        media.addEventListener("click", () => {
+          const full = vid.getAttribute("data-full") || vid.currentSrc;
+          videoPlayer.src = full;
+          videoBox.classList.add("open");
+          videoPlayer.currentTime = 0;
+          videoPlayer.play().catch(() => {});
+        });
       });
-    });
+    }
+    function renderFilms(list) {
+      const esc = (s) => String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c]));
+      const films = list.filter((v) => v.present !== false);
+      reelScroller.innerHTML = films.map((v) => `
+          <article class="vcard" data-tilt>
+            <button class="vcard-media" type="button" aria-label="Play preview">
+              <video muted loop playsinline preload="metadata" data-full="${v.src}">
+                <source src="${v.src}" type="video/mp4" />
+              </video>
+              <span class="vcard-glyph" aria-hidden="true"></span>
+            </button>
+            <p class="meta">${esc(v.kicker)}</p>
+            <h3>${esc(v.title) || "Untitled cut"}</h3>
+            <p>${esc(v.description)}</p>
+          </article>`).join("");
+      bindFilms();
+    }
+    renderFilms(DEFAULT_FILMS);
+    fetch("videos/meta.json?v=" + Date.now())
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => { if (data && Array.isArray(data.videos)) renderFilms(data.videos); })
+      .catch(() => {});
     videoBox.addEventListener("click", (e) => {
       if (e.target === videoPlayer) return;
       videoBox.classList.remove("open");
@@ -840,7 +827,6 @@
       videoPlayer.load();
     });
 
-    const reelScroller = document.getElementById("reelScroller");
     const reelNext = document.getElementById("reelNext");
     reelNext.addEventListener("click", () => {
       reelScroller.scrollBy({ left: reelScroller.clientWidth * 0.82, behavior: "smooth" });

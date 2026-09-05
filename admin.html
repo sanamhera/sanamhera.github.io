@@ -18,38 +18,41 @@
     * { box-sizing: border-box; }
     body { margin: 0; font-family: var(--sans); background: var(--bg); color: var(--fg); min-height: 100dvh; }
     a { color: var(--accent); text-decoration: none; }
-    .wrap { max-width: 920px; margin: 0 auto; padding: 40px 20px 80px; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 40px 20px 80px; }
     h1 { font-family: var(--display); font-weight: 500; font-size: 2.2rem; margin: 0 0 8px; }
+    h2.block { font-family: var(--display); font-weight: 500; font-size: 1.5rem; margin: 40px 0 8px; }
     .lede { color: var(--muted); max-width: 38rem; line-height: 1.55; }
-    label { display: grid; gap: 6px; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 18px; }
-    input[type="password"], input[type="text"] {
+    label { display: grid; gap: 6px; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 14px; }
+    input[type="password"], input[type="text"], textarea {
       width: 100%; font: inherit; color: var(--fg); background: var(--raised);
       border: 0; box-shadow: var(--shadow); border-radius: 12px; padding: 12px 14px; min-height: 48px;
     }
+    textarea { min-height: 88px; resize: vertical; }
     .btn {
       margin-top: 14px; border: 0; border-radius: 999px; background: var(--fg); color: var(--bg);
       padding: 12px 22px; font: inherit; font-weight: 600; cursor: pointer;
     }
     .btn:hover { background: var(--accent); }
     .btn[disabled] { opacity: .55; }
-    .grid { display: grid; gap: 16px; margin-top: 36px; }
+    .btn.ghost { background: transparent; color: var(--fg); box-shadow: var(--shadow); }
+    .grid { display: grid; gap: 16px; margin-top: 20px; }
     @media (min-width: 720px) { .grid { grid-template-columns: 1fr 1fr; } }
     .slot { background: var(--surface); border-radius: 18px; padding: 18px; box-shadow: var(--shadow); }
-    .slot h2 { font-family: var(--display); font-size: 1.15rem; font-weight: 500; margin: 0 0 6px; }
-    .slot p { margin: 0 0 12px; color: var(--muted); font-size: .88rem; }
+    .slot h3 { font-family: var(--display); font-size: 1.15rem; font-weight: 500; margin: 0 0 6px; }
+    .slot .hint { margin: 0 0 12px; color: var(--muted); font-size: .88rem; }
     .preview { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 12px; background: var(--raised); display: block; margin-bottom: 12px; }
-    .preview.tall { aspect-ratio: 16/9; max-height: 220px; width: 100%; }
     .status { min-height: 1.2em; margin: 8px 0 0; font-size: .85rem; color: var(--accent); }
     .hidden { display: none; }
     .note { font-size: .85rem; color: var(--muted); line-height: 1.5; }
     code { color: var(--fg); }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <p style="letter-spacing:.18em; text-transform:uppercase; color:var(--accent); font-size:.72rem; font-weight:500;">Private</p>
     <h1>Studio</h1>
-    <p class="lede">Replace photos and films on www.sanamhera.com. Files go to your GitHub repo; the live site updates after Pages rebuilds (usually under two minutes).</p>
+    <p class="lede">Replace photos and films on www.sanamhera.com. Files and titles go to your GitHub repo; the live site updates after Pages rebuilds (usually under two minutes).</p>
 
     <div id="gate">
       <label>GitHub personal access token (repo scope)
@@ -61,28 +64,37 @@
     </div>
 
     <div id="board" class="hidden">
-      <p class="note">Signed in to <code>sanamhera/sanamhera.github.io</code>. Drop a file on a slot, or use Choose.</p>
-      <div class="grid" id="slots"></div>
-      <p style="margin-top:28px;"><a href="/">← Back to site</a> · <button class="btn" id="forget" type="button" style="margin-top:0">Forget token</button></p>
+      <h2 class="block">Photos</h2>
+      <div class="grid" id="photoSlots"></div>
+      <h2 class="block">Films — 6 landscape slots</h2>
+      <p class="note">Upload an MP4, then set the title and description that appear under the preview. Empty slots stay hidden on the site until you upload.</p>
+      <div class="grid" id="filmSlots"></div>
+      <p style="margin-top:28px;"><a href="/">← Back to site</a> · <button class="btn ghost" id="forget" type="button">Forget token</button></p>
     </div>
   </div>
   <script>
     const OWNER = "sanamhera";
     const REPO = "sanamhera.github.io";
     const API = `https://api.github.com/repos/${OWNER}/${REPO}/contents`;
-    const SLOTS = [
-      { path: "images/portrait.png", title: "Hero portrait", hint: "Full-bleed photo at the top. PNG or JPG.", kind: "image", preview: "images/portrait.png" },
-      { path: "images/desk.jpeg", title: "Desk photo", hint: "Impact section, large still.", kind: "image", preview: "images/desk.jpeg" },
-      { path: "images/award.jpeg", title: "Award photo", hint: "Phoenix Meet still.", kind: "image", preview: "images/award.jpeg" },
-      { path: "videos/video-1.mp4", title: "Film 01 · Google Flow", hint: "MP4, keep under ~25 MB.", kind: "video", preview: "videos/video-1.mp4" },
-      { path: "videos/video-2.mp4", title: "Film 02 · Grok", hint: "MP4, keep under ~25 MB.", kind: "video", preview: "videos/video-2.mp4" },
-      { path: "videos/video-3.mp4", title: "Film 03 · ElevenLabs", hint: "MP4, keep under ~25 MB.", kind: "video", preview: "videos/video-3.mp4" },
-      { path: "videos/video-4.mp4", title: "Film 04 · Canva", hint: "MP4, keep under ~25 MB.", kind: "video", preview: "videos/video-4.mp4" }
+    const PHOTOS = [
+      { path: "images/portrait.png", title: "Hero portrait", hint: "Full-bleed photo at the top. PNG or JPG." },
+      { path: "images/desk.jpeg", title: "Desk photo", hint: "Impact section, large still." },
+      { path: "images/award.jpeg", title: "Award photo", hint: "Phoenix Meet still." }
+    ];
+    const DEFAULT_VIDEOS = [
+      { src: "videos/video-1.mp4", kicker: "01 · Google Flow", title: "Untitled cut", description: "Add a line on what this piece is about.", present: true },
+      { src: "videos/video-2.mp4", kicker: "02 · Grok", title: "Untitled cut", description: "Add a line on what this piece is about.", present: true },
+      { src: "videos/video-3.mp4", kicker: "03 · ElevenLabs", title: "Untitled cut", description: "Add a line on what this piece is about.", present: true },
+      { src: "videos/video-4.mp4", kicker: "04 · Canva", title: "Untitled cut", description: "Add a line on what this piece is about.", present: true },
+      { src: "videos/video-5.mp4", kicker: "05 · Film", title: "", description: "", present: false },
+      { src: "videos/video-6.mp4", kicker: "06 · Film", title: "", description: "", present: false }
     ];
 
     const tokenInput = document.getElementById("token");
     const gateNote = document.getElementById("gateNote");
     tokenInput.value = localStorage.getItem("sh_studio_token") || "";
+    let videos = DEFAULT_VIDEOS.map((v) => ({ ...v }));
+    let metaSha = null;
 
     async function api(path, opts = {}) {
       const token = localStorage.getItem("sh_studio_token");
@@ -112,63 +124,129 @@
       });
     }
 
-    async function upload(slot, file, statusEl) {
-      statusEl.textContent = "Reading file…";
-      const content = await fileToBase64(file);
-      statusEl.textContent = "Talking to GitHub…";
+    async function putFile(path, contentB64, message) {
       let sha;
-      try {
-        const current = await api(`${API}/${slot.path}`);
-        sha = current.sha;
-      } catch (_) { /* new file */ }
-      await api(`${API}/${slot.path}`, {
+      try { sha = (await api(`${API}/${path}`)).sha; } catch (_) {}
+      return api(`${API}/${path}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: `Studio: update ${slot.title}`,
-          content,
-          sha
-        })
+        body: JSON.stringify({ message, content: contentB64, sha })
       });
-      statusEl.textContent = "Uploaded. Live in about a minute — hard-refresh the site.";
     }
 
-    function renderBoard() {
+    async function loadMeta() {
+      try {
+        const file = await api(`${API}/videos/meta.json`);
+        metaSha = file.sha;
+        const decoded = JSON.parse(atob(file.content.replace(/\n/g, "")));
+        if (Array.isArray(decoded.videos) && decoded.videos.length) {
+          videos = DEFAULT_VIDEOS.map((fallback, i) => ({ ...fallback, ...(decoded.videos[i] || {}) }));
+        }
+      } catch (_) { /* first run */ }
+    }
+
+    async function saveMeta(statusEl) {
+      const payload = JSON.stringify({ videos }, null, 2);
+      const content = btoa(unescape(encodeURIComponent(payload)));
+      const res = await putFile("videos/meta.json", content, "Studio: update film titles");
+      metaSha = res.content && res.content.sha;
+      if (statusEl) statusEl.textContent = "Copy saved. Live in about a minute — hard-refresh the site.";
+    }
+
+    function photoCard(slot) {
+      const el = document.createElement("article");
+      el.className = "slot";
+      el.innerHTML = `
+        <h3>${slot.title}</h3>
+        <p class="hint">${slot.hint}</p>
+        <img class="preview" src="${slot.path}?v=${Date.now()}" alt="" />
+        <input type="file" accept="image/*" />
+        <p class="status"></p>
+      `;
+      const input = el.querySelector("input");
+      const status = el.querySelector(".status");
+      input.addEventListener("change", async () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        input.disabled = true;
+        status.textContent = "Uploading…";
+        try {
+          await putFile(slot.path, await fileToBase64(file), `Studio: update ${slot.title}`);
+          el.querySelector(".preview").src = URL.createObjectURL(file);
+          status.textContent = "Uploaded. Live in about a minute.";
+        } catch (err) {
+          status.textContent = err.message || "Upload failed";
+        } finally { input.disabled = false; }
+      });
+      return el;
+    }
+
+    function filmCard(index) {
+      const v = videos[index];
+      const n = String(index + 1).padStart(2, "0");
+      const el = document.createElement("article");
+      el.className = "slot";
+      el.innerHTML = `
+        <h3>Film ${n}</h3>
+        <p class="hint">MP4, landscape, keep under ~25 MB.</p>
+        <video class="preview" src="${v.src}?v=${Date.now()}" muted playsinline></video>
+        <input type="file" accept="video/mp4,video/*" />
+        <label>Label
+          <input type="text" data-field="kicker" value="${v.kicker || ""}" placeholder="01 · Google Flow" />
+        </label>
+        <label>Title
+          <input type="text" data-field="title" value="${v.title || ""}" placeholder="Name of the piece" />
+        </label>
+        <label>Description
+          <textarea data-field="description" placeholder="One or two lines on what this is">${v.description || ""}</textarea>
+        </label>
+        <div class="row">
+          <button class="btn" type="button" data-save>Save title & description</button>
+        </div>
+        <p class="status"></p>
+      `;
+      const status = el.querySelector(".status");
+      const fileInput = el.querySelector('input[type="file"]');
+      fileInput.addEventListener("change", async () => {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        fileInput.disabled = true;
+        status.textContent = "Uploading film…";
+        try {
+          await putFile(v.src, await fileToBase64(file), `Studio: upload film ${n}`);
+          videos[index].present = true;
+          await saveMeta();
+          el.querySelector("video").src = URL.createObjectURL(file);
+          status.textContent = "Film uploaded. Live in about a minute.";
+        } catch (err) {
+          status.textContent = err.message || "Upload failed";
+        } finally { fileInput.disabled = false; }
+      });
+      el.querySelector("[data-save]").addEventListener("click", async () => {
+        videos[index].kicker = el.querySelector('[data-field="kicker"]').value.trim();
+        videos[index].title = el.querySelector('[data-field="title"]').value.trim();
+        videos[index].description = el.querySelector('[data-field="description"]').value.trim();
+        if (videos[index].title || videos[index].present) videos[index].present = true;
+        const btn = el.querySelector("[data-save]");
+        btn.disabled = true;
+        status.textContent = "Saving…";
+        try { await saveMeta(status); }
+        catch (err) { status.textContent = err.message || "Could not save"; }
+        finally { btn.disabled = false; }
+      });
+      return el;
+    }
+
+    async function renderBoard() {
       document.getElementById("gate").classList.add("hidden");
       document.getElementById("board").classList.remove("hidden");
-      const root = document.getElementById("slots");
-      root.innerHTML = "";
-      SLOTS.forEach((slot) => {
-        const el = document.createElement("article");
-        el.className = "slot";
-        const media = slot.kind === "video"
-          ? `<video class="preview tall" src="${slot.preview}?v=${Date.now()}" muted playsinline></video>`
-          : `<img class="preview" src="${slot.preview}?v=${Date.now()}" alt="" />`;
-        el.innerHTML = `
-          <h2>${slot.title}</h2>
-          <p>${slot.hint}</p>
-          ${media}
-          <input type="file" accept="${slot.kind === "video" ? "video/mp4,video/*" : "image/*"}" />
-          <p class="status"></p>
-        `;
-        const input = el.querySelector("input");
-        const status = el.querySelector(".status");
-        input.addEventListener("change", async () => {
-          const file = input.files && input.files[0];
-          if (!file) return;
-          input.disabled = true;
-          try {
-            await upload(slot, file, status);
-            const preview = el.querySelector(".preview");
-            preview.src = URL.createObjectURL(file);
-          } catch (err) {
-            status.textContent = err.message || "Upload failed";
-          } finally {
-            input.disabled = false;
-          }
-        });
-        root.appendChild(el);
-      });
+      await loadMeta();
+      const photos = document.getElementById("photoSlots");
+      photos.innerHTML = "";
+      PHOTOS.forEach((p) => photos.appendChild(photoCard(p)));
+      const films = document.getElementById("filmSlots");
+      films.innerHTML = "";
+      videos.forEach((_, i) => films.appendChild(filmCard(i)));
     }
 
     document.getElementById("unlock").addEventListener("click", async () => {
@@ -178,7 +256,7 @@
       gateNote.textContent = "Checking…";
       try {
         await api(`https://api.github.com/repos/${OWNER}/${REPO}`);
-        renderBoard();
+        await renderBoard();
       } catch (err) {
         localStorage.removeItem("sh_studio_token");
         gateNote.textContent = err.message || "Could not reach the repo. Check the token has repo access.";
@@ -190,9 +268,7 @@
       location.reload();
     });
 
-    if (tokenInput.value) {
-      document.getElementById("unlock").click();
-    }
+    if (tokenInput.value) document.getElementById("unlock").click();
   </script>
 </body>
 </html>

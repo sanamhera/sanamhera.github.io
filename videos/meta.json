@@ -1,0 +1,46 @@
+{
+  "videos": [
+    {
+      "src": "videos/video-1.mp4",
+      "kicker": "01 · Google Flow",
+      "title": "Untitled cut",
+      "description": "Add a line on what this piece is about.",
+      "present": true
+    },
+    {
+      "src": "videos/video-2.mp4",
+      "kicker": "02 · Grok",
+      "title": "Untitled cut",
+      "description": "Add a line on what this piece is about.",
+      "present": true
+    },
+    {
+      "src": "videos/video-3.mp4",
+      "kicker": "03 · ElevenLabs",
+      "title": "Untitled cut",
+      "description": "Add a line on what this piece is about.",
+      "present": true
+    },
+    {
+      "src": "videos/video-4.mp4",
+      "kicker": "04 · Canva",
+      "title": "Untitled cut",
+      "description": "Add a line on what this piece is about.",
+      "present": true
+    },
+    {
+      "src": "videos/video-5.mp4",
+      "kicker": "05 · Film",
+      "title": "",
+      "description": "",
+      "present": false
+    },
+    {
+      "src": "videos/video-6.mp4",
+      "kicker": "06 · Film",
+      "title": "",
+      "description": "",
+      "present": false
+    }
+  ]
+}
